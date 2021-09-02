@@ -1,70 +1,107 @@
-# Getting Started with Create React App
+# ICC Formatter
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This application helps internal developers in a local government agency to create a SQL file with proper format to update internal ICC fees for their permitting system. Before the app, developers would enter by hand all of the SQL commands every quarter. This simple application makes that process MUCH faster and easier.
 
-## Available Scripts
+This app was build off of Shan Carter's [Mr-Data-Converter](https://github.com/shancarter/Mr-Data-Converter). The front-end was added and a process to take the converted data and format it to the local governments specifications.
 
-In the project directory, you can run:
+Styling done with Material-UI.
 
-### `npm start`
+  ## Table of Contents
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [License](#license)
+  - [Questions](#questions)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+   ## Installation
 
-### `npm test`
+  Download the repo and run to start the app: 
+  ```
+  npm install
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  npm start
+  ```
 
-### `npm run build`
+  ## Usage
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  The developer first has to have the Excel document with the data from the permitting department with the new fees. The Excel file is always in the same format to meet local government standards. The developer then copy's the data and pastes it into the correct bax and hits format! Its that simple! There is a choice to download the file as a .SQL file. 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  The app can take any form of data and rebuild it into anything the user wants. Using the [Mr-Data-Converter](https://github.com/shancarter/Mr-Data-Converter) you can configure the app to process any form of data. By default this app converts a string of numbers and separates the rows of the textarea into an array of arrays of numbers. Then the output is looped through to create a string of what ever you wish to convert.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  This loop is simple and creates the proper string in the format to add fields into the SQL table according to the users preferences.
 
-### `npm run eject`
+  ```
+  dataArray.forEach(group => {
+      group.forEach(fee => {
+        if (isNaN(parseInt(fee))) {
+          output += `\n\r--${fee}\n\r`
+        } else {
+          if (typeKey !== 9) {
+            typeKey++;
+          } else {
+            typeKey = 1;
+            groupKey++;
+          }
+          output += `(${groupKey}, ${typeKey}, ${parseFloat(fee)}, '${discontinueDate}', '${effectiveDate}'),\n`;
+        }
+      });
+    });
+  ```
+  Added to the top of the output are a series of SQL commands found inside the sqlHeader in the /src/utils/index.js. This can be configured to add any SQL commands.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+  Input:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  ```
+  298.55	288.43	280.93	269.54	253.09	245.77
+  273.51	263.39	255.89	244.51	228.06	220.73
+  233.39	226.42	220.85	211.80	199.64	194.14
+  232.39	225.42	218.85	210.80	197.64	193.14
+  276.84	266.72	259.22	247.83	231.83	225.68
+  231.62	221.50	213.00	202.61	185.16	178.84
+  272.51	262.39	253.89	243.51	226.06	219.73
+  240.93	232.14	224.41	213.38	194.94	187.44
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+  ```
+  output:
+  ```
+    --update [BCMS].[dbo].[List_ICCFee]
+  --SET DiscontinueDate = '2021-04-19'
+  --where DiscontinueDate like '%2999%'
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+  select *
+  FROM List_ICCGroupTypes lit   
 
-## Learn More
+  select *
+  FROM List_ICCPaymentType lit
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  select *
+  FROM List_ICCFee li
+  where DiscontinueDate like '%2999%'
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  insert into List_ICCFee(iccGroupCodeKey, iccPaymentTypeKey, iccFee, DiscontinueDate, EffectiveDate)
+  values
+  (1, 1, 298.55, '2999-01-01', '2021-09-02'),
+  (1, 2, 288.43, '2999-01-01', '2021-09-02'),
+  (1, 3, 280.93, '2999-01-01', '2021-09-02'),
+  (1, 4, 269.54, '2999-01-01', '2021-09-02'),
+  (1, 5, 253.09, '2999-01-01', '2021-09-02'),
+  (1, 6, 245.77, '2999-01-01', '2021-09-02'),
+  (1, 7, 273.51, '2999-01-01', '2021-09-02'),
+  (1, 8, 263.39, '2999-01-01', '2021-09-02'),
+  (1, 9, 255.89, '2999-01-01', '2021-09-02'),
+  (2, 1, 244.51, '2999-01-01', '2021-09-02'),
+  (2, 2, 228.06, '2999-01-01', '2021-09-02'),
+  (2, 3, 220.73, '2999-01-01', '2021-09-02'),
+  (2, 4, 233.39, '2999-01-01', '2021-09-02'),
+  ```
+  ## License
 
-### Code Splitting
+  This application is made with the [MIT License](https://opensource.org/licenses/MIT)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
 
-### Analyzing the Bundle Size
+  ## Questions
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+  For any questions you might have, please contact me at collin.wilson@brunswickcountync.gov
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+<img src="https://avatars2.githubusercontent.com/u/65512203?s=460&u=fb31e3048d1cfa064b8ee0ec696be762b96343f8&v=4" width="120" style="border-radius:50%"/>
