@@ -1,6 +1,6 @@
 # ICC Formatter
 
-This application helps internal developers in a local government agency to create a SQL file with proper format to update internal ICC fees for their permitting system. Before the app, developers would enter by hand all of the SQL commands every quarter. This simple application makes that process MUCH faster and easier.
+This application helps developers to create a SQL file with proper format to update internal ICC fees for their permitting system. Before the app, developers would enter by hand all of the SQL commands every quarter. This simple application makes that process MUCH faster and easier.
 
 This app was build off of Shan Carter's [Mr-Data-Converter](https://github.com/shancarter/Mr-Data-Converter). The front-end was added and a process to take the converted data and format it to the local governments specifications.
 
